@@ -51,6 +51,40 @@ class LoginSerializer(serializers.Serializer):
         }
 
         return token_data
+    
+
+
+
+class RequestPasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist():
+            raise serializers.ValidationError("User Not Found",code=404)
+        
+        return attrs
+    
+
+
+class VerifyOTPSerilizer(serializers.Serializer):
+    otp = serializers.CharField(required=True)
+
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    new_password = serializers.CharField(required=True,min_length=7)
+    
+
+    
+
+
+        
 
 
 
