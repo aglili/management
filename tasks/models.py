@@ -23,10 +23,14 @@ class Task(models.Model):
     priority = models.CharField(choices=priority_choices,max_length=10,default="medium")
     status = models.CharField(max_length=15,choices=status_choices,default="open")
     creator = models.ForeignKey(User,on_delete=models.CASCADE)
+    assignee = models.CharField(max_length=50,blank=True,null=True)
+    
 
 
     def __str__(self) -> str:
         return self.title
     
+
+
 
 

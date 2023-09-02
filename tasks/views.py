@@ -1,4 +1,4 @@
-from .serializers import CreateTaskSerializer
+from .serializers import CreateTaskSerializer,GetTaskSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -87,7 +87,7 @@ def assign_task(request, task_id:str):
             )
 
         if task.creator == request.user:
-            task.creator = assignee
+            task.assignee = assignee
             task.save()
 
             return Response(
@@ -123,6 +123,50 @@ def assign_task(request, task_id:str):
             },
             status=500
         )
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_tasks(request):
+    user = request.user
+    tasks = Task.objects.filter(creator=user)
+    serializer = GetTaskSerializer(tasks,many=True)
+    return Response(
+        {
+            "status":True,
+            "data":serializer.data
+        }
+    ,status=200)
+
+
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_assigned_tasks(request):
+    try:
+        user = request.user.username
+        tasks = Task.objects.filter(assignee=user)
+        serializer = GetTaskSerializer(tasks, many=True)
+        return Response(
+            {
+                "status": True,
+                "data": serializer.data
+            },
+            status=200
+        )
+    except Exception as e:
+        return Response(
+            {
+                "status": False,
+                "error": str(e)
+            },
+            status=500
+        )
+    
+
+
 
         
 
