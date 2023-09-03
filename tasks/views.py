@@ -87,7 +87,7 @@ def assign_task(request, task_id:str):
             )
 
         if task.creator == request.user:
-            task.assignee = assignee
+            task.assignee = assignee_username
             task.save()
 
             return Response(
