@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .models import Task
 from accounts.models import User
+from .utils import send_task_email
 
 
 
@@ -88,6 +89,8 @@ def assign_task(request, task_id:str):
 
         if task.creator == request.user:
             task.assignee = assignee_username
+            due_date_iso = task.due_date.isoformat() ## so date is can be serialized
+            send_task_email(username=assignee_username,due_date=due_date_iso,description=task.description,assigner=request.user.username,email=assignee.email)
             task.save()
 
             return Response(
